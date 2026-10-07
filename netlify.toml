@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Netlify's default build image resolves to Node 16, which Next 15 rejects.
+[build.environment]
+  NODE_VERSION = "20"
