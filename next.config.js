@@ -6,6 +6,10 @@ const nextConfig = {
         destination: 'https://example.com/',
       },
       {
+        source: '/originvary/:slug*',
+        destination: 'https://netlify-vary-demo.netlify.app/fakeorigin',
+      },
+      {
         source: '/int/:slug*',
         destination: '/internal-target',
       },
