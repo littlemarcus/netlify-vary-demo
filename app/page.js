@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main>
       <h1>Next.js headers() on Netlify</h1>
-      <p>Tested on Next.js 15.5.27, Node 24.</p>
+      <p>Verified on Next.js 16.4.0 and 15.5.27.</p>
 
       <h2>1. The runtime merges your Netlify-Vary</h2>
       <p>
@@ -60,6 +60,28 @@ curl -sI "$SITE/none/demo" | grep -i x-probe   # X-Probe: none`}
       <ul>
         <li><a href="/int/foo">/int/foo</a> — internal rewrite, header applies</li>
         <li><a href="/none/demo">/none/demo</a> — no rewrite, header applies</li>
+      </ul>
+
+      <h2>3. Can an edge function set it instead?</h2>
+      <p>
+        A Netlify edge function on <code>/ext/*</code> and <code>/efonly/*</code> calls{' '}
+        <code>context.next()</code>, then sets <code>X-Ef</code> and{' '}
+        <code>Netlify-Vary: query=efv</code> on the response.
+      </p>
+      <p>
+        The question is not only whether the header appears. It is whether the value reaches
+        the cache key. Read <code>debug-x-nf-raw-cache-variation</code> and look for{' '}
+        <code>efv</code>.
+      </p>
+      <pre style={box}>
+{`curl -sI -H 'x-nf-debug-logging: 1' "$SITE/ext/foo" \\
+  | grep -i 'x-ef\\|netlify-vary\\|raw-cache-variation'
+
+curl -sI -H 'x-nf-debug-logging: 1' "$SITE/efonly/demo" \\
+  | grep -i 'x-ef\\|netlify-vary\\|raw-cache-variation'`}
+      </pre>
+      <ul>
+        <li><a href="/efonly/demo">/efonly/demo</a> — edge function, no rewrite</li>
       </ul>
     </main>
   )
