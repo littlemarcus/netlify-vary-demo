@@ -83,6 +83,23 @@ curl -sI -H 'x-nf-debug-logging: 1' "$SITE/efonly/demo" \\
       <ul>
         <li><a href="/efonly/demo">/efonly/demo</a> — edge function, no rewrite</li>
       </ul>
+
+      <h2>4. Can middleware set it instead?</h2>
+      <p>
+        On <code>/mwext/*</code> the external rewrite happens inside middleware, using{' '}
+        <code>NextResponse.rewrite()</code>. The middleware sets <code>X-Mw</code> and{' '}
+        <code>Netlify-Vary: query=mwv</code> on that response.
+      </p>
+      <p>
+        Under <code>next start</code> the header survives, where the{' '}
+        <code>next.config.js</code> approach does not. The open question is whether the value
+        reaches the cache key once deployed, since Netlify runs middleware as an edge
+        function.
+      </p>
+      <pre style={box}>
+{`curl -sI -H 'x-nf-debug-logging: 1' "$SITE/mwext/foo" \\
+  | grep -i 'x-mw\\|netlify-vary\\|raw-cache-variation'`}
+      </pre>
     </main>
   )
 }
